@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tvku - Modern Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Include icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        if (!localStorage.getItem('tvku_admin_token')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-tv"></i> Tvku Admin
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item active" data-target="channelsView">
+                <i class="fa-solid fa-layer-group"></i> Channels
+            </li>
+            <li class="nav-item" data-target="analyticsView">
+                <i class="fa-solid fa-chart-pie"></i> Analytics
+            </li>
+            <li class="nav-item" data-target="settingsView">
+                <i class="fa-solid fa-gear"></i> Settings
+            </li>
+            <li class="nav-item" data-target="liveChatView">
+                <i class="fa-solid fa-comment-dots"></i> Live Chat
+            </li>
+        </ul>
+        <div class="nav-item logout" id="logoutBtn">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="channelsView">
+            <div class="header" style="align-items: center; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h1>Channel Management</h1>
+                <p>Add, edit, or import your IPTV streams to Firebase.</p>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <select id="serverSelect" style="padding: 10px 16px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 8px; color: white; font-family: 'Outfit', sans-serif; font-size: 14px; outline: none; min-width: 150px;">
+                    <option value="channels">Server Default</option>
+                </select>
+                <button id="addServerBtn" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);"><i class="fa-solid fa-plus"></i> New Server</button>
+                <div style="width: 1px; height: 30px; background: var(--card-border); margin: 0 8px;"></div>
+                <button id="deleteAllBtn" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Delete All</button>
+                <button id="importBtn" class="btn btn-success"><i class="fa-solid fa-cloud-arrow-up"></i> Import M3U</button>
+                <button id="addBtn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Channel</button>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Logo</th>
+                            <th>Channel Name</th>
+                            <th>Category</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="channelsTableBody">
+                        <tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">Loading channels...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div> <!-- Close channelsView -->
+
+        <div id="settingsView" style="display: none;">
+            <div class="header">
+                <h1>App Settings</h1>
+                <p>Customize your TV app backgrounds and configuration.</p>
+            </div>
+            <div class="glass-panel" style="padding: 24px;">
+                <h3 style="margin-bottom: 16px; color: var(--primary);">Dynamic Backgrounds</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Add image URLs to be used as sliding backgrounds in your TV app. The TV app will cycle through these images automatically every 10 seconds.</p>
+                
+                <div id="backgroundsList" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                    <!-- Background inputs will be added here -->
+                </div>
+                
+                <div style="display: flex; gap: 12px;">
+                    <button id="addBackgroundBtn" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);"><i class="fa-solid fa-plus"></i> Add Image URL</button>
+                    <button id="saveSettingsBtn" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save Settings</button>
+                </div>
+            </div>
+        </div>
+        <!-- Live Chat View -->
+        <div id="liveChatView" style="display: none; height: 100%; display: flex; flex-direction: column;">
+            <div class="header" style="align-items: center; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1>Live Chat</h1>
+                    <p>Monitor and respond to messages from TV users.</p>
+                </div>
+                <div>
+                    <button class="btn btn-danger" id="clearChatBtn" style="background: var(--danger-color); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer;">
+                        <i class="fa-solid fa-trash"></i> Clear All Chat
+                    </button>
+                </div>
+            </div>
+            
+            <div style="flex-grow: 1; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; margin-top: 20px; display: flex; flex-direction: column; overflow: hidden;">
+                <div id="chatMessages" style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Chat messages will appear here -->
+                </div>
+                <div style="padding: 16px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--card-border); display: flex; gap: 12px;">
+                    <input type="text" id="chatInput" placeholder="Type a message as Admin..." style="flex-grow: 1; padding: 12px 16px; background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 8px; color: white; font-family: 'Outfit', sans-serif; outline: none;">
+                    <button id="sendChatBtn" class="btn btn-primary" style="background: var(--primary-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        <i class="fa-solid fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="formModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="formTitle">Add New Channel</h2>
+            </div>
+            <form id="channelForm">
+                <input type="hidden" id="channelId">
+                <div class="form-group">
+                    <label>Channel Name</label>
+                    <input type="text" id="name" required placeholder="e.g. MNC TV">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="category" required placeholder="e.g. NASIONAL">
+                </div>
+                <div class="form-group">
+                    <label>Logo URL</label>
+                    <input type="url" id="logoUrl" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Stream URL (.m3u8)</label>
+                    <input type="url" id="streamUrl" required placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>DRM Type (Optional)</label>
+                    <select id="drmType" style="width: 100%; padding: 12px 16px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--card-border); border-radius: 8px; color: white; font-family: 'Outfit', sans-serif; outline: none; margin-bottom: 8px;">
+                        <option value="" style="background: var(--bg-dark); color: white;">None</option>
+                        <option value="clearkey" style="background: var(--bg-dark); color: white;">Clearkey</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>DRM Key (Optional, format KID:KEY)</label>
+                    <input type="text" id="drmKey" placeholder="KID:KEY">
+                </div>
+                <div class="form-group">
+                    <label>Custom User-Agent (Optional)</label>
+                    <input type="text" id="userAgent" placeholder="Mozilla/5.0 ...">
+                </div>
+                <div class="form-group">
+                    <label>Referer (Optional)</label>
+                    <input type="text" id="referer" placeholder="https://...">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px;">
+                    <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Channel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Bulk Import M3U</h2>
+            </div>
+            <form id="importForm">
+                <div class="form-group">
+                    <label>M3U / M3U8 Playlist URL</label>
+                    <input type="url" id="importUrl" required placeholder="https://raw.githubusercontent.com/...">
+                </div>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+                    This will parse the M3U URL and insert all channels into your Firebase Realtime Database automatically.
+                </p>
+                <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                    <button type="button" class="btn btn-outline" id="cancelImportBtn">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="importSubmitBtn"><i class="fa-solid fa-cloud-arrow-up"></i> Start Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="statusToast" class="status-toast"></div>
+
+    <!-- Firebase Chat logic is inside script.js -->
+    <script src="script.js"></script>
+    <script src="app.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tvku Admin - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        if (localStorage.getItem('tvku_admin_token')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="glass-panel login-card">
+            <div class="brand" style="margin-bottom: 20px; font-size: 36px;">
+                <i class="fa-solid fa-tv"></i> Tvku
+            </div>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Enter your credentials to securely access the dashboard.</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="username" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Access Dashboard <i class="fa-solid fa-arrow-right"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="statusToast" class="status-toast"></div>
+
+    <script src="login.js"></script>
+</body>
+</html>
