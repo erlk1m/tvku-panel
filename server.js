@@ -61,11 +61,13 @@ app.get('/api/servers', requireAuth, async (req, res) => {
         const response = await fetch(FIREBASE_ROOT_URL + '?shallow=true');
         const data = await response.json();
         
+        const reservedKeys = ['chat', 'settings', 'chat_effects'];
         const servers = [];
         if (data && !data.error) {
             for (const key in data) {
-                // If legacy 'channels' is the only thing there, we still return it
-                servers.push(key);
+                if (!reservedKeys.includes(key)) {
+                    servers.push(key);
+                }
             }
         }
         res.json({ servers });
