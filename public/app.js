@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         channelsView.style.display = targetId === 'channelsView' ? 'block' : 'none';
         settingsView.style.display = targetId === 'settingsView' ? 'block' : 'none';
-        if (liveChatView) liveChatView.style.display = targetId === 'live-chat' ? 'flex' : 'none';
+        if (liveChatView) liveChatView.style.display = targetId === 'liveChatView' ? 'flex' : 'none';
         if (userEffectsView) userEffectsView.style.display = targetId === 'user-effects' ? 'block' : 'none';
         
         if (targetId === 'settingsView') {
