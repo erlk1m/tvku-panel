@@ -210,11 +210,18 @@ app.put('/api/channels/:id', requireAuth, async (req, res) => {
 });
 
 // --- CHAT EFFECTS API ---
+const FIREBASE_BASE = 'https://tvku-48c77-default-rtdb.asia-southeast1.firebasedatabase.app/';
+
 // Get Chat Effects
 app.get('/api/chat-effects', requireAuth, async (req, res) => {
     try {
-        const response = await fetch(`${FIREBASE_ROOT_URL}chat_effects.json`);
+        const response = await fetch(`${FIREBASE_BASE}chat_effects.json`);
         const data = await response.json();
+        
+        // Ensure data is valid object. If data has error property, it means Firebase returned an error
+        if (data && data.error) {
+            throw new Error(data.error);
+        }
         res.json(data || {});
     } catch (error) {
         res.status(500).json({ error: 'Gagal mengambil efek chat.' });
@@ -231,7 +238,7 @@ app.post('/api/chat-effects', requireAuth, async (req, res) => {
         
         const safeKey = encodeURIComponent(username);
         
-        await fetch(`${FIREBASE_ROOT_URL}chat_effects/${safeKey}.json`, {
+        await fetch(`${FIREBASE_BASE}chat_effects/${safeKey}.json`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -251,7 +258,7 @@ app.post('/api/chat-effects', requireAuth, async (req, res) => {
 app.delete('/api/chat-effects/:username', requireAuth, async (req, res) => {
     try {
         const safeKey = encodeURIComponent(req.params.username);
-        await fetch(`${FIREBASE_ROOT_URL}chat_effects/${safeKey}.json`, {
+        await fetch(`${FIREBASE_BASE}chat_effects/${safeKey}.json`, {
             method: 'DELETE'
         });
         res.json({ success: true });
