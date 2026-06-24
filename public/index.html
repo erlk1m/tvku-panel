@@ -36,6 +36,9 @@
             <li class="nav-item" data-target="user-effects">
                 <i class="fa-solid fa-wand-magic-sparkles"></i> User Effects
             </li>
+            <li class="nav-item" data-target="tv-admins">
+                <i class="fa-solid fa-shield-halved"></i> TV App Admins
+            </li>
         </ul>
         <div class="nav-item logout" id="logoutBtn">
             <i class="fa-solid fa-right-from-bracket"></i> Logout
@@ -171,6 +174,47 @@
                             </tr>
                         </thead>
                         <tbody id="effectsTableBody">
+                            <!-- Data injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TV App Admins Section -->
+        <div id="tv-admins" style="display: none; height: 100%; display: flex; flex-direction: column;">
+            <div class="header">
+                <h2>🛡️ TV App Admins</h2>
+                <p>Kelola daftar Admin untuk Aplikasi Android TV (Mencegah pencurian identitas di Chat).</p>
+            </div>
+            
+            <div class="glass-panel" style="padding: 24px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 16px; color: var(--primary);">Tambah/Ubah Kata Sandi Admin</h3>
+                <form id="tvAdminForm">
+                    <div class="form-group">
+                        <label>Username (Contoh: Admin)</label>
+                        <input type="text" id="tvAdminUsername" required placeholder="Nama khusus di aplikasi TV">
+                    </div>
+                    <div class="form-group">
+                        <label>Password Login Aplikasi TV</label>
+                        <input type="text" id="tvAdminPassword" required placeholder="Kata sandi rahasia">
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Simpan Admin</button>
+                </form>
+            </div>
+
+            <div class="glass-panel" style="padding: 24px; flex-grow: 1;">
+                <h3 style="margin-bottom: 16px; color: var(--primary);">Daftar Admin Aplikasi TV</h3>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Username Admin</th>
+                                <th>Password</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tvAdminsTableBody">
                             <!-- Data injected by JS -->
                         </tbody>
                     </table>

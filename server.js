@@ -267,6 +267,57 @@ app.delete('/api/chat-effects/:username', requireAuth, async (req, res) => {
     }
 });
 
+// --- TV APP ADMINS API ---
+// Get TV Admins
+app.get('/api/tv-admins', requireAuth, async (req, res) => {
+    try {
+        const response = await fetch(`${FIREBASE_BASE}tv_admins.json`);
+        const data = await response.json();
+        
+        if (data && data.error) {
+            throw new Error(data.error);
+        }
+        res.json(data || {});
+    } catch (error) {
+        res.status(500).json({ error: 'Gagal mengambil data admin TV.' });
+    }
+});
+
+// Add/Update TV Admin
+app.post('/api/tv-admins', requireAuth, async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username dan Password wajib diisi' });
+        }
+        
+        const safeKey = encodeURIComponent(username);
+        
+        await fetch(`${FIREBASE_BASE}tv_admins/${safeKey}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+        
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Gagal menyimpan admin TV.' });
+    }
+});
+
+// Delete TV Admin
+app.delete('/api/tv-admins/:username', requireAuth, async (req, res) => {
+    try {
+        const safeKey = encodeURIComponent(req.params.username);
+        await fetch(`${FIREBASE_BASE}tv_admins/${safeKey}.json`, {
+            method: 'DELETE'
+        });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Gagal menghapus admin TV.' });
+    }
+});
+
 // DELETE single channel
 app.delete('/api/channels/:id', requireAuth, async (req, res) => {
     try {

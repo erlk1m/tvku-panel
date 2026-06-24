@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsView = document.getElementById('settingsView');
     const liveChatView = document.getElementById('liveChatView');
     const userEffectsView = document.getElementById('user-effects');
+    const tvAdminsView = document.getElementById('tv-admins');
     
     function switchView(targetId) {
         navItems.forEach(item => item.classList.remove('active'));
@@ -38,11 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
         settingsView.style.display = targetId === 'settingsView' ? 'block' : 'none';
         if (liveChatView) liveChatView.style.display = targetId === 'liveChatView' ? 'flex' : 'none';
         if (userEffectsView) userEffectsView.style.display = targetId === 'user-effects' ? 'block' : 'none';
+        if (tvAdminsView) tvAdminsView.style.display = targetId === 'tv-admins' ? 'block' : 'none';
         
         if (targetId === 'settingsView') {
             fetchSettings();
         } else if (targetId === 'user-effects') {
             fetchChatEffects();
+        } else if (targetId === 'tv-admins') {
+            fetchTvAdmins();
         }
     }
 
@@ -453,6 +457,86 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.success) {
                     showToast('Efek dihapus', 'success');
                     fetchChatEffects();
+                }
+            });
+        }
+    };
+
+    // --- TV APP ADMINS LOGIC ---
+    const tvAdminForm = document.getElementById('tvAdminForm');
+    const tvAdminsTableBody = document.getElementById('tvAdminsTableBody');
+
+    function fetchTvAdmins() {
+        if (!tvAdminsTableBody) return;
+        fetch('/api/tv-admins', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => {
+            tvAdminsTableBody.innerHTML = '';
+            if (data.error) {
+                tvAdminsTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: red;">' + data.error + '</td></tr>';
+                return;
+            }
+            const keys = Object.keys(data);
+            if (keys.length === 0) {
+                tvAdminsTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Belum ada admin terdaftar.</td></tr>';
+                return;
+            }
+            keys.forEach(username => {
+                const admin = data[username];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: bold; color: var(--danger);">${decodeURIComponent(username)}</td>
+                    <td>${admin.password}</td>
+                    <td>
+                        <button onclick="deleteTvAdmin('${username}')" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </td>
+                `;
+                tvAdminsTableBody.appendChild(tr);
+            });
+        })
+        .catch(err => console.error(err));
+    }
+
+    if (tvAdminForm) {
+        tvAdminForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('tvAdminUsername').value.trim();
+            const password = document.getElementById('tvAdminPassword').value.trim();
+
+            fetch('/api/tv-admins', {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Admin TV berhasil disimpan!', 'success');
+                    tvAdminForm.reset();
+                    fetchTvAdmins();
+                } else {
+                    showToast('Gagal menyimpan Admin TV', 'error');
+                }
+            });
+        });
+    }
+
+    window.deleteTvAdmin = function(encodedUsername) {
+        if (confirm('Yakin ingin menghapus Admin TV ini? (Mereka tidak akan bisa login lagi di aplikasi)')) {
+            fetch(`/api/tv-admins/${encodedUsername}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Admin TV dihapus', 'success');
+                    fetchTvAdmins();
+                } else {
+                    showToast('Gagal menghapus Admin TV', 'error');
                 }
             });
         }
