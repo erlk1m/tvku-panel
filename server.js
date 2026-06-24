@@ -207,6 +207,57 @@ app.put('/api/channels/:id', requireAuth, async (req, res) => {
     }
 });
 
+// --- CHAT EFFECTS API ---
+// Get Chat Effects
+app.get('/api/chat-effects', requireAuth, async (req, res) => {
+    try {
+        const response = await fetch(`${FIREBASE_ROOT_URL}chat_effects.json`);
+        const data = await response.json();
+        res.json(data || {});
+    } catch (error) {
+        res.status(500).json({ error: 'Gagal mengambil efek chat.' });
+    }
+});
+
+// Add/Update Chat Effect
+app.post('/api/chat-effects', requireAuth, async (req, res) => {
+    try {
+        const { username, badgeUrl, textColor, bgGifUrl } = req.body;
+        if (!username) {
+            return res.status(400).json({ error: 'Username wajib diisi' });
+        }
+        
+        const safeKey = encodeURIComponent(username);
+        
+        await fetch(`${FIREBASE_ROOT_URL}chat_effects/${safeKey}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                badgeUrl: badgeUrl || "",
+                textColor: textColor || "",
+                bgGifUrl: bgGifUrl || ""
+            })
+        });
+        
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Gagal menyimpan efek chat.' });
+    }
+});
+
+// Delete Chat Effect
+app.delete('/api/chat-effects/:username', requireAuth, async (req, res) => {
+    try {
+        const safeKey = encodeURIComponent(req.params.username);
+        await fetch(`${FIREBASE_ROOT_URL}chat_effects/${safeKey}.json`, {
+            method: 'DELETE'
+        });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Gagal menghapus efek chat.' });
+    }
+});
+
 // DELETE single channel
 app.delete('/api/channels/:id', requireAuth, async (req, res) => {
     try {

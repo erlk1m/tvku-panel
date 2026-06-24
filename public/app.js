@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const navItems = document.querySelectorAll('.nav-item[data-target]');
     const channelsView = document.getElementById('channelsView');
     const settingsView = document.getElementById('settingsView');
-    const analyticsView = document.createElement('div'); // Mock for now
     const liveChatView = document.getElementById('liveChatView');
+    const userEffectsView = document.getElementById('user-effects');
     
     function switchView(targetId) {
         navItems.forEach(item => item.classList.remove('active'));
@@ -36,10 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         channelsView.style.display = targetId === 'channelsView' ? 'block' : 'none';
         settingsView.style.display = targetId === 'settingsView' ? 'block' : 'none';
-        if (liveChatView) liveChatView.style.display = targetId === 'liveChatView' ? 'flex' : 'none';
+        if (liveChatView) liveChatView.style.display = targetId === 'live-chat' ? 'flex' : 'none';
+        if (userEffectsView) userEffectsView.style.display = targetId === 'user-effects' ? 'block' : 'none';
         
         if (targetId === 'settingsView') {
             fetchSettings();
+        } else if (targetId === 'user-effects') {
+            fetchChatEffects();
         }
     }
 
@@ -377,4 +380,81 @@ document.addEventListener('DOMContentLoaded', () => {
             statusToast.classList.remove('show');
         }, 3000);
     }
+
+    // --- CHAT EFFECTS LOGIC ---
+    const effectForm = document.getElementById('effectForm');
+    const effectsTableBody = document.getElementById('effectsTableBody');
+
+    function fetchChatEffects() {
+        fetch('/api/chat-effects', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => {
+            effectsTableBody.innerHTML = '';
+            const keys = Object.keys(data);
+            if (keys.length === 0) {
+                effectsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Belum ada efek pengguna terdaftar.</td></tr>';
+                return;
+            }
+            keys.forEach(username => {
+                const eff = data[username];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: bold;">${decodeURIComponent(username)}</td>
+                    <td>${eff.badgeUrl ? `<img src="${eff.badgeUrl}" width="24" height="24">` : '-'}</td>
+                    <td>${eff.textColor ? `<span style="color:${eff.textColor}; font-weight:bold;">${eff.textColor}</span>` : '-'}</td>
+                    <td>${eff.bgGifUrl ? `<a href="${eff.bgGifUrl}" target="_blank">View Background</a>` : '-'}</td>
+                    <td>
+                        <button onclick="deleteChatEffect('${username}')" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </td>
+                `;
+                effectsTableBody.appendChild(tr);
+            });
+        })
+        .catch(err => console.error(err));
+    }
+
+    if (effectForm) {
+        effectForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('effUsername').value.trim();
+            const badgeUrl = document.getElementById('effBadgeUrl').value.trim();
+            const textColor = document.getElementById('effTextColor').value.trim();
+            const bgGifUrl = document.getElementById('effBgUrl').value.trim();
+
+            fetch('/api/chat-effects', {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ username, badgeUrl, textColor, bgGifUrl })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Efek pengguna berhasil disimpan!', 'success');
+                    effectForm.reset();
+                    fetchChatEffects();
+                } else {
+                    showToast('Gagal menyimpan efek', 'error');
+                }
+            });
+        });
+    }
+
+    window.deleteChatEffect = function(encodedUsername) {
+        if (confirm('Yakin ingin menghapus efek untuk pengguna ini?')) {
+            fetch(`/api/chat-effects/${encodedUsername}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Efek dihapus', 'success');
+                    fetchChatEffects();
+                }
+            });
+        }
+    };
 });
