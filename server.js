@@ -8,9 +8,9 @@ const server = http.createServer(app);
 
 const PORT = 3000;
 
-// Hardcoded Admin Credentials for simplicity
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'admin123';
+// Hardcoded Admin Credentials for simplicity (Or from Environment Variables)
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
 const AUTH_TOKEN = 'secret-admin-token-tvku';
 
 // Firebase Realtime Database URL
