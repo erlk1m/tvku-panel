@@ -33,6 +33,9 @@
             <li class="nav-item" data-target="liveChatView">
                 <i class="fa-solid fa-comment-dots"></i> Live Chat
             </li>
+            <li class="nav-item" data-target="user-effects">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> User Effects
+            </li>
         </ul>
         <div class="nav-item logout" id="logoutBtn">
             <i class="fa-solid fa-right-from-bracket"></i> Logout
@@ -120,6 +123,57 @@
                     <button id="sendChatBtn" class="btn btn-primary" style="background: var(--primary-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
                         <i class="fa-solid fa-paper-plane"></i> Send
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Effects Section -->
+        <div id="user-effects" style="display: none; height: 100%; display: flex; flex-direction: column;">
+            <div class="header">
+                <h2>✨ Chat User Effects</h2>
+                <p>Berikan Badge GIF dan Efek Teks khusus untuk pengguna VIP / Admin.</p>
+            </div>
+            
+            <div class="glass-panel" style="padding: 24px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 16px; color: var(--primary);">Tambah/Edit Efek Pengguna</h3>
+                <form id="effectForm">
+                    <div class="form-group">
+                        <label>Username Pengguna (Harus sama persis dengan yang di TV)</label>
+                        <input type="text" id="effUsername" required placeholder="Contoh: Admin">
+                    </div>
+                    <div class="form-group">
+                        <label>URL Badge (Opsional, gunakan ekstensi .gif / .png)</label>
+                        <input type="url" id="effBadgeUrl" placeholder="https://example.com/badge.gif">
+                    </div>
+                    <div class="form-group">
+                        <label>Warna Teks Khusus (Opsional, contoh: #FFD700)</label>
+                        <input type="text" id="effTextColor" placeholder="#FFD700">
+                    </div>
+                    <div class="form-group">
+                        <label>URL Background Chat Bubble Animasi (Opsional, gunakan .gif)</label>
+                        <input type="url" id="effBgUrl" placeholder="https://example.com/sparkle-bg.gif">
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Simpan Efek</button>
+                </form>
+            </div>
+
+            <div class="glass-panel" style="padding: 24px; flex-grow: 1;">
+                <h3 style="margin-bottom: 16px; color: var(--primary);">Daftar Pengguna VIP</h3>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Badge</th>
+                                <th>Warna Teks</th>
+                                <th>Background GIF</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="effectsTableBody">
+                            <!-- Data injected by JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
