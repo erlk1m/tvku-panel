@@ -38,34 +38,12 @@ app.use(express.static('public'));
 const FIREBASE_BASE = 'https://tvku-48c77-default-rtdb.asia-southeast1.firebasedatabase.app/';
 
 // Login Endpoint
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
-    try {
-        const response = await fetch(`${FIREBASE_BASE}tv_admins.json`);
-        const data = await response.json();
-        
-        let isValid = false;
-        if (data && !data.error) {
-            const adminData = data[username];
-            if (adminData && adminData.password === password) {
-                isValid = true;
-            }
-        }
-        
-        // Fallback: If database is completely empty or missing, allow default env admin to login so they can create an admin
-        if (!data || Object.keys(data).length === 0 || data.error) {
-            if (username === ADMIN_USER && password === ADMIN_PASS) {
-                isValid = true;
-            }
-        }
-        
-        if (isValid) {
-            res.json({ success: true, token: AUTH_TOKEN });
-        } else {
-            res.status(401).json({ success: false, error: 'Username atau Password salah!' });
-        }
-    } catch (err) {
-        res.status(500).json({ success: false, error: 'Gagal memverifikasi login.' });
+    if (username === ADMIN_USER && password === ADMIN_PASS) {
+        res.json({ success: true, token: AUTH_TOKEN });
+    } else {
+        res.status(401).json({ success: false, error: 'Username atau Password salah!' });
     }
 });
 
