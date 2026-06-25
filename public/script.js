@@ -11,20 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderMessage(msg) {
         const isSelf = msg.sender === 'Admin';
         const msgDiv = document.createElement('div');
-        msgDiv.style.maxWidth = '70%';
-        msgDiv.style.padding = '10px 14px';
-        msgDiv.style.borderRadius = '12px';
-        msgDiv.style.color = 'white';
-        msgDiv.style.marginBottom = '8px';
-        msgDiv.style.fontFamily = "'Outfit', sans-serif";
-        msgDiv.style.alignSelf = isSelf ? 'flex-end' : 'flex-start';
-        msgDiv.style.backgroundColor = isSelf ? 'var(--primary-color)' : 'rgba(255, 255, 255, 0.1)';
+        msgDiv.className = `chat-bubble ${isSelf ? 'chat-outgoing' : 'chat-incoming'}`;
 
         const senderSpan = document.createElement('div');
-        senderSpan.style.fontSize = '10px';
-        senderSpan.style.color = 'rgba(255, 255, 255, 0.7)';
-        senderSpan.style.marginBottom = '4px';
-        senderSpan.innerText = msg.sender;
+        senderSpan.className = 'chat-meta';
+        
+        if (isSelf) {
+            senderSpan.style.justifyContent = 'flex-end';
+            senderSpan.innerHTML = `<span>Admin</span> <i class="fa-solid fa-crown" style="color: gold;"></i>`;
+        } else {
+            senderSpan.innerText = msg.sender;
+        }
 
         const textSpan = document.createElement('div');
         textSpan.style.fontSize = '14px';

@@ -35,11 +35,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeNav = Array.from(navItems).find(item => item.getAttribute('data-target') === targetId);
         if (activeNav) activeNav.classList.add('active');
         
-        channelsView.style.display = targetId === 'channelsView' ? 'block' : 'none';
-        settingsView.style.display = targetId === 'settingsView' ? 'block' : 'none';
-        if (liveChatView) liveChatView.style.display = targetId === 'liveChatView' ? 'flex' : 'none';
-        if (userEffectsView) userEffectsView.style.display = targetId === 'user-effects' ? 'block' : 'none';
-        if (tvAdminsView) tvAdminsView.style.display = targetId === 'tv-admins' ? 'block' : 'none';
+        const views = [channelsView, settingsView, liveChatView, userEffectsView, tvAdminsView];
+        views.forEach(view => {
+            if (view) {
+                view.style.display = 'none';
+                view.classList.remove('fade-in');
+            }
+        });
+        
+        let targetView = null;
+        if (targetId === 'channelsView') targetView = channelsView;
+        else if (targetId === 'settingsView') targetView = settingsView;
+        else if (targetId === 'liveChatView') targetView = liveChatView;
+        else if (targetId === 'user-effects') targetView = userEffectsView;
+        else if (targetId === 'tv-admins') targetView = tvAdminsView;
+
+        if (targetView) {
+            targetView.style.display = targetId === 'liveChatView' ? 'flex' : 'block';
+            // Force reflow to restart animation
+            void targetView.offsetWidth;
+            targetView.classList.add('fade-in');
+        }
         
         if (targetId === 'settingsView') {
             fetchSettings();

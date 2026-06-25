@@ -75,11 +75,15 @@ body {
 .nav-item.active, .nav-item:hover {
     background: rgba(14, 165, 233, 0.15);
     color: var(--primary);
+    transform: translateX(4px);
+    border-left: 3px solid var(--primary);
 }
 
 .nav-item.logout:hover {
     background: rgba(239, 68, 68, 0.15);
     color: var(--danger);
+    transform: translateX(4px);
+    border-left: 3px solid var(--danger);
 }
 
 /* Main Content */
@@ -168,8 +172,13 @@ body {
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--card-border);
     border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 28px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(14, 165, 233, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-panel:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(14, 165, 233, 0.1);
 }
 
 .table-container {
@@ -336,4 +345,63 @@ input:focus {
 .login-card {
     width: 100%;
     max-width: 400px;
+}
+
+/* Animations & Chat */
+.fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-bubble {
+    padding: 14px 18px;
+    border-radius: 18px;
+    max-width: 80%;
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.chat-incoming {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+}
+
+.chat-outgoing {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.3), rgba(14, 165, 233, 0.1));
+    border: 1px solid rgba(14, 165, 233, 0.4);
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+    color: #f0f9ff;
+}
+
+.chat-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1s ease-in-out infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
