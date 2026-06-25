@@ -85,16 +85,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function fetchSettings() {
         fetch('/api/settings', { headers: { 'Authorization': `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => {
-            backgroundsList.innerHTML = '';
-            const bgs = data.backgrounds || [];
-            if (bgs.length === 0) {
-                backgroundsList.appendChild(createBackgroundInput());
-            } else {
-                bgs.forEach(url => backgroundsList.appendChild(createBackgroundInput(url)));
-            }
-        });
+            .then(res => res.json())
+            .then(data => {
+                backgroundsList.innerHTML = '';
+                const bgs = data.backgrounds || [];
+                if (bgs.length === 0) {
+                    backgroundsList.appendChild(createBackgroundInput());
+                } else {
+                    bgs.forEach(url => backgroundsList.appendChild(createBackgroundInput(url)));
+                }
+                
+                // Load m3u_url if exists
+                const m3uUrlInput = document.getElementById('globalM3uUrl');
+                if (m3uUrlInput) {
+                    m3uUrlInput.value = data.m3u_url || '';
+                }
+            });
     }
 
     addBackgroundBtn.addEventListener('click', () => {
@@ -105,13 +111,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputs = backgroundsList.querySelectorAll('.bg-input');
         const backgrounds = Array.from(inputs).map(inp => inp.value.trim()).filter(val => val !== '');
         
+        const m3uUrlInput = document.getElementById('globalM3uUrl');
+        const m3u_url = m3uUrlInput ? m3uUrlInput.value.trim() : '';
+        
         fetch('/api/settings', {
             method: 'POST',
             headers: { 
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json' 
             },
-            body: JSON.stringify({ backgrounds })
+            body: JSON.stringify({ backgrounds, m3u_url })
         })
         .then(res => res.json())
         .then(data => {

@@ -89,6 +89,13 @@
                 <h1>App Settings</h1>
                 <p>Customize your TV app backgrounds and configuration.</p>
             </div>
+            
+            <div class="glass-panel" style="padding: 24px; margin-bottom: 24px;">
+                <h3 style="margin-bottom: 16px; color: var(--primary);">Direct M3U URL (Bypass Admin Panel)</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">If you enter a URL here, the TV App will directly load and parse the M3U file, bypassing the imported channels below. This preserves all DRM and VLC metadata.</p>
+                <input type="text" id="globalM3uUrl" placeholder="https://raw.githubusercontent.com/.../playlist.m3u" style="width: 100%; padding: 12px 16px; background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 8px; color: white; font-family: 'Outfit', sans-serif; outline: none;">
+            </div>
+
             <div class="glass-panel" style="padding: 24px;">
                 <h3 style="margin-bottom: 16px; color: var(--primary);">Dynamic Backgrounds</h3>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Add image URLs to be used as sliding backgrounds in your TV app. The TV app will cycle through these images automatically every 10 seconds.</p>

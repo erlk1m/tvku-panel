@@ -127,11 +127,11 @@ app.get('/api/settings', requireAuth, async (req, res) => {
 // POST settings
 app.post('/api/settings', requireAuth, async (req, res) => {
     try {
-        const { backgrounds } = req.body;
+        const { backgrounds, m3u_url } = req.body;
         const response = await fetch('https://tvku-48c77-default-rtdb.asia-southeast1.firebasedatabase.app/settings.json', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ backgrounds: backgrounds || [] })
+            body: JSON.stringify({ backgrounds: backgrounds || [], m3u_url: m3u_url || '' })
         });
         const data = await response.json();
         res.json({ success: true, settings: data });
