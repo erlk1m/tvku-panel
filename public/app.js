@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     saveSettingsBtn.addEventListener('click', () => {
         const inputs = backgroundsList.querySelectorAll('.bg-input');
-        const backgrounds = Array.from(document.querySelectorAll('.bg-url-input')).map(input => input.value).filter(val => val);
+        const backgrounds = Array.from(inputs).map(inp => inp.value.trim()).filter(val => val !== '');
         const m3u_url = document.getElementById('globalM3uUrl') ? document.getElementById('globalM3uUrl').value.trim() : '';
         const app_title = document.getElementById('appTitle') ? document.getElementById('appTitle').value.trim() : '';
         const announcement_text = document.getElementById('announcementText') ? document.getElementById('announcementText').value.trim() : '';
