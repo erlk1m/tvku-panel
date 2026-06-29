@@ -63,7 +63,7 @@ app.get('/api/servers', requireAuth, async (req, res) => {
         const response = await fetch(FIREBASE_ROOT_URL + '?shallow=true');
         const data = await response.json();
         
-        const reservedKeys = ['chat', 'settings', 'chat_effects'];
+        const reservedKeys = ['chat', 'settings', 'chat_effects', 'tv_admins'];
         const servers = [];
         if (data && !data.error) {
             for (const key in data) {
