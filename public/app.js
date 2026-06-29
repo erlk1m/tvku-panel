@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logoutBtn');
     const serverSelect = document.getElementById('serverSelect');
     const addServerBtn = document.getElementById('addServerBtn');
+    const editServerBtn = document.getElementById('editServerBtn');
     
     let currentServer = localStorage.getItem('tvku_current_server') || 'channels';
     
@@ -206,6 +207,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    editServerBtn.addEventListener('click', () => {
+        if (currentServer === 'channels') {
+            alert('Server Default tidak bisa diubah namanya.');
+            return;
+        }
+        const newName = prompt('Ubah nama server menjadi:', currentServer);
+        if (newName && newName.trim() !== '' && newName.trim() !== currentServer) {
+            const finalName = newName.trim();
+            fetch('/api/servers/rename', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ oldName: currentServer, newName: finalName })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Nama Server berhasil diubah.', 'success');
+                    currentServer = finalName;
+                    localStorage.setItem('tvku_current_server', currentServer);
+                    fetchServers();
+                    fetchChannels();
+                } else {
+                    showToast(data.error || 'Gagal mengubah nama server.', 'error');
+                }
+            })
+            .catch(err => {
+                showToast('Terjadi kesalahan.', 'error');
+            });
+        }
+    });
+
     logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('tvku_admin_token');
         window.location.href = 'login.html';
@@ -355,7 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delete All
     deleteAllBtn.addEventListener('click', () => {
-        if (confirm('Are you ABSOLUTELY SURE you want to delete ALL channels in THIS SERVER? This action cannot be undone!')) {
+        if (confirm(`Apakah Anda YAKIN ingin MENGHAPUS KESELURUHAN server "${currentServer === 'channels' ? 'Server Default' : currentServer}" beserta isinya? Tindakan ini tidak bisa dibatalkan!`)) {
             fetch(`/api/channels?server=${encodeURIComponent(currentServer)}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }

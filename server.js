@@ -195,6 +195,38 @@ app.post('/api/import', requireAuth, async (req, res) => {
     }
 });
 
+// Rename Server
+app.post('/api/servers/rename', requireAuth, async (req, res) => {
+    try {
+        const { oldName, newName } = req.body;
+        if (!oldName || !newName || oldName === newName) return res.json({success: true});
+        if (oldName === 'channels') return res.status(400).json({error: "Cannot rename default server"});
+        
+        const oldUrl = getFirebaseUrl(oldName);
+        const newUrl = getFirebaseUrl(newName);
+        
+        // 1. Fetch old data
+        const fetchRes = await fetch(`${oldUrl}.json`);
+        const data = await fetchRes.json();
+        
+        // 2. Put into new data if exists
+        if (data && !data.error) {
+            await fetch(`${newUrl}.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+        }
+        
+        // 3. Delete old data
+        await fetch(`${oldUrl}.json`, { method: 'DELETE' });
+        
+        res.json({success: true});
+    } catch (e) {
+        res.status(500).json({ error: "Failed to rename server" });
+    }
+});
+
 // PUT update channel
 app.put('/api/channels/:id', requireAuth, async (req, res) => {
     try {
