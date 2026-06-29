@@ -113,10 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Load m3u_url if exists
-                const m3uUrlInput = document.getElementById('globalM3uUrl');
-                if (m3uUrlInput) {
-                    m3uUrlInput.value = data.m3u_url || '';
-                }
+                const globalM3uUrl = document.getElementById('globalM3uUrl');
+                if (globalM3uUrl) globalM3uUrl.value = data.m3u_url || '';
+                
+                const appTitle = document.getElementById('appTitle');
+                if (appTitle) appTitle.value = data.app_title || '';
+
                 const announcementText = document.getElementById('announcementText');
                 if (announcementText) announcementText.value = data.announcement_text || '';
                 const maintenanceMode = document.getElementById('maintenanceMode');
@@ -130,20 +132,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     saveSettingsBtn.addEventListener('click', () => {
         const inputs = backgroundsList.querySelectorAll('.bg-input');
-        const backgrounds = Array.from(inputs).map(inp => inp.value.trim()).filter(val => val !== '');
-        
-        const m3uUrlInput = document.getElementById('globalM3uUrl');
-        const m3u_url = m3uUrlInput ? m3uUrlInput.value.trim() : '';
+        const backgrounds = Array.from(document.querySelectorAll('.bg-url-input')).map(input => input.value).filter(val => val);
+        const m3u_url = document.getElementById('globalM3uUrl') ? document.getElementById('globalM3uUrl').value.trim() : '';
+        const app_title = document.getElementById('appTitle') ? document.getElementById('appTitle').value.trim() : '';
         const announcement_text = document.getElementById('announcementText') ? document.getElementById('announcementText').value.trim() : '';
         const maintenance_mode = document.getElementById('maintenanceMode') ? document.getElementById('maintenanceMode').checked : false;
-        
+
         fetch('/api/settings', {
             method: 'POST',
             headers: { 
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json' 
             },
-            body: JSON.stringify({ backgrounds, m3u_url, announcement_text, maintenance_mode })
+            body: JSON.stringify({ backgrounds, m3u_url, app_title, announcement_text, maintenance_mode })
         })
         .then(res => res.json())
         .then(data => {

@@ -127,13 +127,25 @@ app.get('/api/settings', requireAuth, async (req, res) => {
 // POST settings
 app.post('/api/settings', requireAuth, async (req, res) => {
     try {
-        const { backgrounds, m3u_url, announcement_text, maintenance_mode } = req.body;
+        const { backgrounds, m3u_url, app_title, announcement_text, maintenance_mode } = req.body;
+        
+        // Save to settings.json
         const response = await fetch('https://tvku-48c77-default-rtdb.asia-southeast1.firebasedatabase.app/settings.json', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ backgrounds: backgrounds || [], m3u_url: m3u_url || '', announcement_text: announcement_text || '', maintenance_mode: !!maintenance_mode })
+            body: JSON.stringify({ backgrounds: backgrounds || [], m3u_url: m3u_url || '', app_title: app_title || '', announcement_text: announcement_text || '', maintenance_mode: !!maintenance_mode })
         });
         const data = await response.json();
+        
+        // Also patch app_title to tv_settings.json for backwards compatibility with MainScreen.kt
+        if (app_title !== undefined) {
+            await fetch('https://tvku-48c77-default-rtdb.asia-southeast1.firebasedatabase.app/tv_settings.json', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ app_title: app_title })
+            });
+        }
+        
         res.json({ success: true, settings: data });
     } catch (e) {
         res.status(500).json({ error: "Failed to save settings" });
