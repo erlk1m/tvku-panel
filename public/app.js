@@ -116,6 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (m3uUrlInput) {
                     m3uUrlInput.value = data.m3u_url || '';
                 }
+                const announcementText = document.getElementById('announcementText');
+                if (announcementText) announcementText.value = data.announcement_text || '';
+                const maintenanceMode = document.getElementById('maintenanceMode');
+                if (maintenanceMode) maintenanceMode.checked = !!data.maintenance_mode;
             });
     }
 
@@ -129,6 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const m3uUrlInput = document.getElementById('globalM3uUrl');
         const m3u_url = m3uUrlInput ? m3uUrlInput.value.trim() : '';
+        const announcement_text = document.getElementById('announcementText') ? document.getElementById('announcementText').value.trim() : '';
+        const maintenance_mode = document.getElementById('maintenanceMode') ? document.getElementById('maintenanceMode').checked : false;
         
         fetch('/api/settings', {
             method: 'POST',
@@ -136,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json' 
             },
-            body: JSON.stringify({ backgrounds, m3u_url })
+            body: JSON.stringify({ backgrounds, m3u_url, announcement_text, maintenance_mode })
         })
         .then(res => res.json())
         .then(data => {
@@ -227,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><img src="${channel.logoUrl}" class="channel-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjY2NjIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIgN2wyMCAxME0yIDE3bDIwLTEwIi8+PC9zdmc+'"></td>
-                    <td style="font-weight: 600;">${channel.name}</td>
+                    <td style="font-weight: 600;">${channel.name} ${channel.isRecommended ? '<span title="Rekomendasi">⭐</span>' : ''} ${channel.isHidden ? '<span title="Disembunyikan">🚫</span>' : ''}</td>
                     <td><span class="badge">${channel.category}</span></td>
                     <td style="text-align: right;">
                         <button onclick="editChannel('${channel.id}')" class="btn btn-primary" style="padding: 6px 12px; font-size: 13px; margin-right: 8px;"><i class="fa-solid fa-pen"></i> Edit</button>
@@ -253,6 +259,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('formTitle').textContent = 'Add New Channel';
         channelForm.reset();
         document.getElementById('channelId').value = '';
+        if (document.getElementById('isRecommended')) document.getElementById('isRecommended').checked = false;
+        if (document.getElementById('isHidden')) document.getElementById('isHidden').checked = false;
         formModal.classList.add('active');
     });
 
@@ -271,8 +279,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const drmKey = document.getElementById('drmKey').value;
         const userAgent = document.getElementById('userAgent').value;
         const referer = document.getElementById('referer').value;
+        const isRecommended = document.getElementById('isRecommended') ? document.getElementById('isRecommended').checked : false;
+        const isHidden = document.getElementById('isHidden') ? document.getElementById('isHidden').checked : false;
 
-        const data = { name, category, logoUrl, streamUrl, drmType, drmKey, userAgent, referer, serverName: currentServer };
+        const data = { name, category, logoUrl, streamUrl, drmType, drmKey, userAgent, referer, serverName: currentServer, isRecommended, isHidden };
         const method = id ? 'PUT' : 'POST';
         const url = id ? `/api/channels/${id}?server=${encodeURIComponent(currentServer)}` : `/api/channels?server=${encodeURIComponent(currentServer)}`;
 
@@ -380,6 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('drmKey').value = channel.drmKey || '';
             document.getElementById('userAgent').value = channel.userAgent || '';
             document.getElementById('referer').value = channel.referer || '';
+            if (document.getElementById('isRecommended')) document.getElementById('isRecommended').checked = !!channel.isRecommended;
+            if (document.getElementById('isHidden')) document.getElementById('isHidden').checked = !!channel.isHidden;
             formModal.classList.add('active');
         }
     };

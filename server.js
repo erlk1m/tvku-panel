@@ -100,11 +100,11 @@ app.get('/api/channels', requireAuth, async (req, res) => {
 // POST new channel
 app.post('/api/channels', requireAuth, async (req, res) => {
     try {
-        const { name, category, logoUrl, streamUrl, drmType, drmKey, userAgent, referer, serverName } = req.body;
+        const { name, category, logoUrl, streamUrl, drmType, drmKey, userAgent, referer, serverName, isRecommended, isHidden } = req.body;
         const response = await fetch(getFirebaseUrl(serverName), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, category, logoUrl, streamUrl, drmType: drmType || '', drmKey: drmKey || '', userAgent: userAgent || '', referer: referer || '' })
+            body: JSON.stringify({ name, category, logoUrl, streamUrl, drmType: drmType || '', drmKey: drmKey || '', userAgent: userAgent || '', referer: referer || '', isRecommended: !!isRecommended, isHidden: !!isHidden })
         });
         const data = await response.json(); 
         res.json({ success: true, id: data.name });
@@ -127,11 +127,11 @@ app.get('/api/settings', requireAuth, async (req, res) => {
 // POST settings
 app.post('/api/settings', requireAuth, async (req, res) => {
     try {
-        const { backgrounds, m3u_url } = req.body;
+        const { backgrounds, m3u_url, announcement_text, maintenance_mode } = req.body;
         const response = await fetch('https://tvku-48c77-default-rtdb.asia-southeast1.firebasedatabase.app/settings.json', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ backgrounds: backgrounds || [], m3u_url: m3u_url || '' })
+            body: JSON.stringify({ backgrounds: backgrounds || [], m3u_url: m3u_url || '', announcement_text: announcement_text || '', maintenance_mode: !!maintenance_mode })
         });
         const data = await response.json();
         res.json({ success: true, settings: data });
@@ -198,13 +198,20 @@ app.post('/api/import', requireAuth, async (req, res) => {
 // PUT update channel
 app.put('/api/channels/:id', requireAuth, async (req, res) => {
     try {
-        const { id } = req.params;
-        const { name, category, logoUrl, streamUrl, drmType, drmKey, userAgent, referer, serverName } = req.body;
-        await fetch(getFirebaseItemUrl(serverName, id), {
-            method: 'PUT',
+        const id = req.params.id;
+        const { name, category, logoUrl, streamUrl, drmType, drmKey, userAgent, referer, serverName, isRecommended, isHidden } = req.body;
+        
+        let targetUrl = `${getFirebaseUrl(serverName)}/${id}.json`;
+        if (serverName === 'channels') {
+            targetUrl = `https://tvku-48c77-default-rtdb.asia-southeast1.firebasedatabase.app/channels/${id}.json`;
+        }
+        
+        const response = await fetch(targetUrl, {
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, category, logoUrl, streamUrl, drmType: drmType || '', drmKey: drmKey || '', userAgent: userAgent || '', referer: referer || '' })
+            body: JSON.stringify({ name, category, logoUrl, streamUrl, drmType: drmType || '', drmKey: drmKey || '', userAgent: userAgent || '', referer: referer || '', isRecommended: !!isRecommended, isHidden: !!isHidden })
         });
+        const data = await response.json();
         res.json({ success: true });
     } catch (e) {
         res.status(500).json({ error: "Failed to update channel" });

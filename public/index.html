@@ -94,6 +94,19 @@
             </div>
             
             <div class="glass-panel" style="padding: 24px; margin-bottom: 24px;">
+                <h3 style="margin-bottom: 16px; color: var(--primary);">Global Settings</h3>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="color: white; font-weight: bold; margin-bottom: 8px; display: block;">Pengumuman Teks Berjalan (Marquee)</label>
+                    <input type="text" id="announcementText" placeholder="Contoh: Jadwal maintenance malam ini..." style="width: 100%; padding: 12px 16px; background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 8px; color: white; font-family: 'Outfit', sans-serif; outline: none;">
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 12px;">
+                    <label style="color: white; font-weight: bold; margin: 0;">Mode Maintenance</label>
+                    <input type="checkbox" id="maintenanceMode" style="width: 20px; height: 20px;">
+                    <span style="color: var(--text-muted); font-size: 13px;">(Aktifkan untuk memblokir akses ke aplikasi TV)</span>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 24px; margin-bottom: 24px;">
                 <h3 style="margin-bottom: 16px; color: var(--primary);">Direct M3U URL (Bypass Admin Panel)</h3>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">If you enter a URL here, the TV App will directly load and parse the M3U file, bypassing the imported channels below. This preserves all DRM and VLC metadata.</p>
                 <input type="text" id="globalM3uUrl" placeholder="https://raw.githubusercontent.com/.../playlist.m3u" style="width: 100%; padding: 12px 16px; background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 8px; color: white; font-family: 'Outfit', sans-serif; outline: none;">
@@ -248,6 +261,16 @@
                 <div class="form-group">
                     <label>Category</label>
                     <input type="text" id="category" required placeholder="e.g. NASIONAL">
+                </div>
+                <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="isRecommended">
+                        <span style="color: white;">⭐ Rekomendasi</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="isHidden">
+                        <span style="color: white;">🚫 Sembunyikan</span>
+                    </label>
                 </div>
                 <div class="form-group">
                     <label>Logo URL</label>
